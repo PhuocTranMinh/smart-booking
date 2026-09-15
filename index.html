@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Room Booking</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+  <div class="brand">SMART ROOM</div>
+  <div class="status"><span></span> Hệ thống hoạt động</div>
+</header>
+
+<main>
+  <section class="hero">
+    <div>
+      <p class="eyebrow">SMART ROOM BOOKING · V4</p>
+      <h1>Đặt phòng<br><b>thông minh hơn.</b></h1>
+      <p class="sub">Chọn option hoặc nhập yêu cầu tự nhiên. Chatbot ghi nhớ thông tin qua nhiều lượt, booking được lưu vào PostgreSQL và QR được tạo từ mã booking.</p>
+    </div>
+    <div class="hero-card">
+      <div class="hero-icon">⌂</div>
+      <div><strong>Web + Database + QR</strong><br><small>Sẵn sàng để nối ESP32/Arduino</small></div>
+    </div>
+  </section>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="options">Chọn phòng</button>
+    <button class="tab" data-tab="chat">Chatbot</button>
+    <button class="tab" data-tab="history">Booking</button>
+  </div>
+
+  <section id="options" class="panel active">
+    <div class="step"><span>1</span><div><small>LOẠI PHÒNG</small><h3>Chọn loại phòng</h3></div></div>
+    <div class="room-grid" id="roomTypes">
+      <button class="room-option selected" data-type="Phòng quạt" data-price="10000">
+        <div class="room-icon">🌀</div><strong>Phòng quạt</strong><small>10.000đ / giờ</small>
+      </button>
+      <button class="room-option" data-type="Phòng máy lạnh" data-price="20000">
+        <div class="room-icon">❄️</div><strong>Phòng máy lạnh</strong><small>20.000đ / giờ</small>
+      </button>
+      <button class="room-option" data-type="Phòng học" data-price="15000">
+        <div class="room-icon">▣</div><strong>Phòng học</strong><small>15.000đ / giờ</small>
+      </button>
+    </div>
+
+    <div class="form-row">
+      <label>Số phòng
+        <select id="quantity">
+          <option value="1">1 phòng</option>
+          <option value="2">2 phòng</option>
+          <option value="3">3 phòng</option>
+          <option value="4">4 phòng</option>
+        </select>
+      </label>
+      <label>Mã sinh viên (tùy chọn)
+        <input id="studentId" placeholder="VD: 22110001">
+      </label>
+    </div>
+
+    <div class="form-row">
+      <label>Ngày thuê <input type="date" id="date"></label>
+      <label>Giờ bắt đầu <input type="time" id="start" value="09:00"></label>
+    </div>
+    <div class="form-row">
+      <label>Giờ kết thúc <input type="time" id="end" value="11:00"></label>
+      <div class="availability-box" id="availability">Đang kiểm tra phòng...</div>
+    </div>
+
+    <div class="summary">
+      <span>Tổng tiền dự kiến</span><strong id="optionPrice">20.000đ</strong>
+    </div>
+    <button class="primary" id="bookOptions">Xác nhận đặt phòng →</button>
+    <div class="error" id="optionError"></div>
+  </section>
+
+  <section id="chat" class="panel">
+    <div class="chat-box" id="messages">
+      <div class="msg bot">Xin chào! Hãy nói yêu cầu của bạn. Bạn có thể chia thành nhiều tin nhắn, ví dụ: <b>“Cho mình 2 phòng máy lạnh.<br>Sau đó: từ 9h đến 11h.”</b></div>
+    </div>
+    <div class="chat-input">
+      <input id="chatInput" placeholder="Nhập yêu cầu đặt phòng...">
+      <button id="send">Gửi</button>
+    </div>
+    <div class="examples">
+      <button>2 phòng máy lạnh từ 9h đến 11h</button>
+      <button>1 phòng quạt lúc 14h, thuê 2 tiếng</button>
+    </div>
+  </section>
+
+  <section id="history" class="panel">
+    <div class="section-head"><div><p class="eyebrow">DATABASE</p><h2>Booking gần đây</h2></div><button class="secondary small" id="refreshHistory">↻ Làm mới</button></div>
+    <div id="historyList" class="history-list">Đang tải...</div>
+  </section>
+
+  <section id="result" class="result hidden">
+    <div class="success">✓</div>
+    <p class="eyebrow">ĐẶT PHÒNG THÀNH CÔNG</p>
+    <h2>Booking đã được lưu vào hệ thống</h2>
+    <div class="booking">
+      <div><span>Mã booking</span><strong id="bookingCode"></strong></div>
+      <div><span>Loại phòng</span><strong id="rType"></strong></div>
+      <div><span>Số lượng</span><strong id="rQty"></strong></div>
+      <div><span>Phòng được cấp</span><strong id="rRooms"></strong></div>
+      <div><span>Thời gian</span><strong id="rTime"></strong></div>
+      <div class="total"><span>Tổng tiền</span><strong id="rPrice"></strong></div>
+    </div>
+    <div class="qr-wrap">
+      <img id="qrImage" alt="Booking QR Code">
+      <p>QR chứa mã booking. ESP32 quét QR rồi gọi API xác thực để kiểm tra đúng phòng và đúng thời gian.</p>
+    </div>
+    <button class="secondary" id="newBooking">← Đặt phòng mới</button>
+  </section>
+</main>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
